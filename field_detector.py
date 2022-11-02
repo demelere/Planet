@@ -85,7 +85,6 @@ class FieldDetector:
                 default_lower_value = 0
                 ndvi[ndvi > mid_threshold] = default_upper_value
                 ndvi[ndvi < mid_threshold] = default_lower_value
-                print('This is a valid float')
             except ValueError:
                 print("Please enter a valid float")
                 continue
