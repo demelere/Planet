@@ -27,12 +27,16 @@ class FieldDetector:
             print('Source raster CRS:', self.src.crs)
             print('Destination raster CRS:', self.dst_crs)
 
+            # To do: Default transform produces a .tif that is cut off on the right
+            # Temporary solution is to multiply the width
+            # However, it results in a file much larger than the size of source file
             self.transform, width, height = calculate_default_transform(
                 self.src.crs, self.dst_crs, self.src.width, self.src.height, *self.src.bounds)
-
-            # src_transform = src.transform
-            # dst_transform = src_transform*A.translation(
-            #     -src.width/2.0, -src.height/2.0)*A.scale(2.0)
+            
+            # To do: Figure out a way to zoom out transform without resulting in a black .tif file
+            # self.src_transform = self.src.transform
+            # self.transform = self.src_transform*A.translation(
+            #     -self.src.width/3.0, -self.src.height/3.0)*A.scale(3.0)
 
             # Update spatial characteristics of the output object to be used later to reproject instead of mirroring input
             self.kwargs = self.src.meta.copy()
@@ -42,7 +46,7 @@ class FieldDetector:
                 'transform': self.transform,
                 'crs': self.dst_crs,
                 'width': width*2.0,
-                'height': height
+                'height': height,
             })
 
     ##################################################
@@ -110,7 +114,8 @@ class FieldDetector:
                 src_crs=self.src.crs,
                 dst_transform=self.transform,
                 dst_crs=self.dst_crs,
-                resampling=Resampling.nearest)
+                resampling=Resampling.nearest,
+            )
 
             print('Transform array of source raster: ', self.src.transform)
             print('Transform array of destination raster: ', self.transform)   
